@@ -4,16 +4,16 @@ import * as bcrypt from 'bcrypt';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+    id!: string;
 
   @Column({ unique: true })
-  email: string;
+    email!: string;
 
   @Column()
-  password: string;
+    password!: string;
 
   @Column({ type: 'jsonb', default: ['user'] })
-  roles: string[];
+    roles!: string[];
 
   @BeforeInsert()
   async hashPassword() {
