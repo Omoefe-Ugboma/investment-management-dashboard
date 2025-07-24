@@ -1,3 +1,4 @@
+// src/middleware/rbac.middleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { PERMISSIONS, ROLE_PERMISSIONS } from '../auth/rbac.constants';
@@ -9,8 +10,18 @@ export const checkPermission = (requiredPermission: string) => {
 
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
+        userId: string;
+        email: string;
         roles: string[];
       };
+      
+      // Attach user to request
+      req.user = {
+        id: payload.userId,
+        email: payload.email,
+        roles: payload.roles
+      };
+
       const userPermissions = payload.roles.flatMap(
         (role) => ROLE_PERMISSIONS[role] || []
       );

@@ -1,6 +1,22 @@
-version: '3.8'
-
 services:
+  backend:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_USER=admin
+      - DB_PASSWORD=admin123
+      - DB_NAME=investment_db
+      - DB_PORT=5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
   postgres:
     image: postgres:14
     environment:
@@ -16,21 +32,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    environment:
-      - DB_HOST=postgres  # Uses Docker's internal DNS
-      - DB_PORT=5432
-      - DB_USER=admin
-      - DB_PASSWORD=admin123
-      - DB_NAME=investment_db
-    depends_on:
-      - postgres
 
 volumes:
   postgres_data:

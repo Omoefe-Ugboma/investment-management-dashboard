@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import { AppDataSource } from './config/database';
+import authRoutes from './routes/auth.routes';
+import protectedRoutes from './routes/protected.routes';  // Make sure this exists
 
 const app = express();
 
@@ -8,7 +10,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health Check Endpoint
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/protected', protectedRoutes);  // This mounts your protected routes
+
+// Health Check
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
@@ -16,6 +22,6 @@ app.get('/api/health', (req, res) => {
 // Initialize DB
 AppDataSource.initialize()
   .then(() => console.log('Database connected'))
-  .catch((err: any) => console.error('Database connection error:', err));
+  .catch((err) => console.error('Database connection error:', err));
 
 export default app;

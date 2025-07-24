@@ -1,6 +1,6 @@
 import { AppDataSource } from '../config/database';
 import { User } from '../models/user.entity';
-import { generateTokens, verifyToken } from './auth.utils';
+import { generateTokens, verifyToken } from './auth.utils'; // Add this import
 
 export class AuthService {
   private userRepository = AppDataSource.getRepository(User);
@@ -26,10 +26,13 @@ export class AuthService {
   }
 
   async refreshToken(refreshToken: string) {
-    const payload = verifyToken(refreshToken, true) as { userId: string };
-    const user = await this.userRepository.findOneBy({ id: payload.userId });
-    if (!user) throw new Error('User not found');
-
-    return generateTokens(user);
+    try {
+      const payload = verifyToken(refreshToken, true) as { userId: string };
+      const user = await this.userRepository.findOneBy({ id: payload.userId });
+      if (!user) throw new Error('User not found');
+      return generateTokens(user);
+    } catch (error) {
+      throw new Error('Invalid refresh token');
+    }
   }
 }
