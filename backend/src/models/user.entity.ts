@@ -14,6 +14,7 @@ export class User {
 
   @Column({ type: 'jsonb', default: ['user'] })
     roles!: string[];
+    investments: any;
 
   @BeforeInsert()
   async hashPassword() {
