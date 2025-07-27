@@ -5,6 +5,8 @@ import authRoutes from './routes/auth.routes';
 import protectedRoutes from './routes/protected.routes';  // Make sure this exists
 import { apiLimiter, authLimiter } from './middleware/rateLimiter.middleware';
 import investmentRoutes from './routes/investment.routes';
+import portfolioRouter from './routes/portfolio.routes'; 
+
 const app = express();
 
 // Middleware
@@ -20,6 +22,7 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
+app.use('/api/portfolio', portfolioRouter);
 // Initialize DB
 AppDataSource.initialize()
   .then(() => console.log('Database connected'))
