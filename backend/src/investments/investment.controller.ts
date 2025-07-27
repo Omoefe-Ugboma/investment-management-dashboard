@@ -30,6 +30,27 @@ export const getInvestments = async (req: Request, res: Response) => {
   }
 };
 
+export const getInvestmentById = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      throw new AppError('Unauthorized', 401);
+    }
+
+    const investment = await investmentService.findById(
+      req.params.id,
+      req.user.id
+    );
+    
+    if (!investment) {
+      throw new AppError('Investment not found', 404);
+    }
+    
+    res.json(investment);
+  } catch (error) {
+    handleErrorResponse(error, res);
+  }
+};
+
 export const updateInvestment = async (req: Request, res: Response) => {
   try {
     if (!req.user?.id) {
@@ -57,6 +78,7 @@ export const updateInvestment = async (req: Request, res: Response) => {
   }
 };
 
+
 export const deleteInvestment = async (req: Request, res: Response) => {
   try {
     if (!req.user?.id) {
@@ -68,9 +90,9 @@ export const deleteInvestment = async (req: Request, res: Response) => {
       throw new AppError('Investment ID is required', 400);
     }
 
-    const deleted = await investmentService.delete(id, req.user.id);
+    const isDeleted = await investmentService.delete(id, req.user.id);
     
-    if (deleted!) {  // Fixed the negation syntax here
+    if (isDeleted!) {
       throw new AppError('Investment not found', 404);
     }
     
@@ -79,6 +101,7 @@ export const deleteInvestment = async (req: Request, res: Response) => {
     handleErrorResponse(error, res);
   }
 };
+
 
 function handleErrorResponse(error: unknown, res: Response) {
   if (error instanceof AppError) {

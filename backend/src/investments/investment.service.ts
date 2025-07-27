@@ -56,6 +56,16 @@ export class InvestmentService {
     }
   }
 
+    async findById(id: string, userId: string) {
+    return this.investmentRepo.findOne({
+      where: { 
+        id,
+        user: { id: userId } 
+      }
+    });
+  }
+
+  
   async findOne(id: string, userId: string): Promise<Investment> {
     if (!id || !userId) {
       throw new BadRequestException('Investment ID and User ID are required');
